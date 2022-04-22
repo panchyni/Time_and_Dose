@@ -4,7 +4,7 @@
 ### Setup Environemt ###
 
 # Folder
-setwd("E:/2021/Work_06_17_2021_TGFBTimeSeries/CoxModels_Updated/")
+setwd("<path_to_folder>/Time_and_Dose/CoxModels_Updated/")
 
 # Install Packages
 #if (!require("BiocManager", quietly = TRUE))
