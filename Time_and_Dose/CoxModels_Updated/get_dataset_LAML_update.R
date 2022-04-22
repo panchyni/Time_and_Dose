@@ -4,7 +4,7 @@
 ### Setup Environemt ###
 
 # Folder
-setwd("<path_to_folder>/Time_and_Dose")
+setwd("<path_to_folder>/Time_and_Dose/CoxModels_Updated/")
 
 # Install Packages
 #if (!require("BiocManager", quietly = TRUE))
