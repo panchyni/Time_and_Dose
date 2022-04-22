@@ -1,5 +1,5 @@
 ### Folder
-setwd("E:/2021/Work_4_22_2022_FromScratch/")
+setwd("<path_to_folder>/Time_and_Dose")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
