@@ -1,5 +1,5 @@
 # Folder
-setwd("E:/2021/Work_4_22_2022_FromScratch/CoxModels_Updated/")
+setwd("<path_to_folder>/Time_and_Dose/CoxModels_Updated/")
 
 #Name: dataset_code.R
 #Author: Andrew Willems <awillems@vols.utk.edu>
