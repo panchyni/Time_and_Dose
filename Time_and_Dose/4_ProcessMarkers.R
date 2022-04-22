@@ -1,5 +1,5 @@
 ### Folder
-setwd("E:/2021/Work_4_22_2022_FromScratch/")
+setwd("<path_to_folder>/Time_and_Dose")
 
 Integration1_AllClusterMarkers_Quart <- readRDS("Integration_AllClusterMarkers_QuartAlt.rds")
 Integration1_AllClusterMarkers_Quart$rawFC <- 2^Integration1_AllClusterMarkers_Quart$avg_log2FC
