@@ -15,3 +15,6 @@ No raw sequencing data is included because of file size limitations
   - scRNA data can be obtained from GEO (this will be addressed in the paper)
   - script for obtaining TCGA data are included (FPKM data may be deprecated so might have to be calculated from raw counts)
   - Intermediate files are also excluded because most are larger than the 25Mb limit but can be generated from the raw data
+
+
+Time_and_Dose.zip contains the first version of the code which has fewer corrections for confunding variables
