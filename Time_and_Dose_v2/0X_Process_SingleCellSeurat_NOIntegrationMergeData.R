@@ -221,5 +221,7 @@ integration.combined <- FindClusters(integration.combined, resolution = 0.5)
 ### Save Fully Integrated Data ###
 
 saveRDS(integration.combined,'SeuratData/Seurat_NoIntegration_Combined_FullCorreciton_hg38.rds')
+# Note: The unintegrated data plots can be derived directly from this object using:
+# DimPlot({Seurat_object}, reduction = "umap",group.by = "Batch")
 
 print("Done")
