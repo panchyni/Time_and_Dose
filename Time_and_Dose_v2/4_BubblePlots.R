@@ -29,10 +29,6 @@ UMAP_values <- readRDS("Integrated_UMAP_values.rds")
 dose_samples <- readRDS("DoseSamples.rds")
 time_samples <- readRDS("TimeSamples.rds")
 
-time_doublets <- readRDS("time_doublets.rds")
-time_wo_doublets <- setdiff(time_samples,time_doublets)
-time_samples <- time_wo_doublets
-
 Integrated_E_mat_nsprcomp <- readRDS("Integrated_E_mat_nsprcomp.rds")
 Integrated_M_mat_nsprcomp <- readRDS("Integrated_M_mat_nsprcomp.rds")
 
