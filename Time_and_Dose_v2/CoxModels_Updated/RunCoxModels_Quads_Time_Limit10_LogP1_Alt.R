@@ -1,5 +1,5 @@
 # Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/CoxModels_Updated/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/CoxModels_Updated/")
 
 #Name: dataset_code.R
 #Author: Andrew Willems <awillems@vols.utk.edu>
