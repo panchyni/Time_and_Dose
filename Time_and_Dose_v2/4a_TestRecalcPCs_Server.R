@@ -4,7 +4,7 @@
 
 ### Folder
 #setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
-setwd("/home/panchy/DoseTIme/_fromscratch_server")
+setwd("/home/panchy/DoseTIme/_fromscratch_2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -122,14 +122,16 @@ for (gene in present_M_genes){
   Mgenes_drop_gene <- setdiff(M_genes$Gene,gene)
 
   Scaled_Integrated_data_M <- integated_scale[row.names(integated_scale) %in% Mgenes_drop_gene,]
+  print(gene)
   print(dim(Scaled_Integrated_data_M))
+  print(intersect(gene,row.names(Scaled_Integrated_data_M)))
   set.seed(5)
   Integrated_M_mat_nsprcomp_drop <- nsprcomp(t(Scaled_Integrated_data_M),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
   rerun_nnPCA_results_M[indexM,1] <- gene
   rerun_nnPCA_results_M[indexM,2] <- cor(Integrated_M_mat_nsprcomp_drop$x[,1],Integrated_M_mat_nsprcomp$x[,1])
   indexM=indexM+1
   
-  print(gene)
+  #print(gene)
   E_scores <- Integrated_E_mat_nsprcomp$x[,1]
   M_scores <- Integrated_M_mat_nsprcomp_drop$x[,1]
   
@@ -169,7 +171,7 @@ for (gene in present_M_genes){
   integration.combined.EMT.labeled@meta.data[quart_clusters[[15]],]$label <- 15
   integration.combined.EMT.labeled@meta.data[quart_clusters[[16]],]$label <- 16
   DefaultAssay(integration.combined.EMT.labeled) <- "RNA"
-  #table(integration.combined.EMT.labeled$label)
+  print(table(integration.combined.EMT.labeled$label))
   
   integration.combined.EMT.labeled@active.ident <- as.factor(integration.combined.EMT.labeled$label)
   AllClusterMarkers_LR_QuartClusters <- FindAllMarkers(integration.combined.EMT.labeled,features=gene,test.use="LR",latent.vars=c("nCount_RNA","percent.mito","S.Score","G2M.Score","Batch"),logfc.threshold=0,min.pct=0,return.thresh=1)
@@ -194,14 +196,17 @@ for (gene in present_E_genes){
   Egenes_drop_gene <- setdiff(E_genes$Gene,gene)
   
   Scaled_Integrated_data_E <- integated_scale[row.names(integated_scale) %in% Egenes_drop_gene,]
+  print(gene)
   print(dim(Scaled_Integrated_data_E))
+  print(intersect(gene,row.names(Scaled_Integrated_data_E)))
+
   set.seed(5)
   Integrated_E_mat_nsprcomp_drop <- nsprcomp(t(Scaled_Integrated_data_E),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
   rerun_nnPCA_results_E[indexE,1] <- gene
   rerun_nnPCA_results_E[indexE,2] <- cor(Integrated_E_mat_nsprcomp_drop$x[,1],Integrated_E_mat_nsprcomp$x[,1])
   indexE=indexE+1
   
-  print(gene)
+  #print(gene)
   E_scores <- Integrated_E_mat_nsprcomp_drop$x[,1]
   M_scores <- Integrated_M_mat_nsprcomp$x[,1]
   
@@ -241,7 +246,7 @@ for (gene in present_E_genes){
   integration.combined.EMT.labeled@meta.data[quart_clusters[[15]],]$label <- 15
   integration.combined.EMT.labeled@meta.data[quart_clusters[[16]],]$label <- 16
   DefaultAssay(integration.combined.EMT.labeled) <- "RNA"
-  #table(integration.combined.EMT.labeled$label)
+  print(table(integration.combined.EMT.labeled$label))
   
   integration.combined.EMT.labeled@active.ident <- as.factor(integration.combined.EMT.labeled$label)
   AllClusterMarkers_LR_QuartClusters <- FindAllMarkers(integration.combined.EMT.labeled,features=gene,test.use="LR",latent.vars=c("nCount_RNA","percent.mito","S.Score","G2M.Score","Batch"),logfc.threshold=0,min.pct=0,return.thresh=1)
