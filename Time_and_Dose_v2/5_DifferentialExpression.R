@@ -45,6 +45,9 @@ quart_clusters <- readRDS("EMQuartileClusters.rds")
 # Use unintegrated data  for Marker ID
 integration.combined.All <- readRDS("SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_Processed.rds")
 integration.combined.All <- subset(integration.combined.All, subset = GBC != 'GBC0' | Batch == 'A' | Batch == 'B')
+# Watch out for "Error: vector memory exhausted (limit reached?)" in the line above. Will result in includling
+# unlabeled dose samples in data. Can also check below to see if label zero samples left in the table
+# To fix, might have to run a a system with more memory
 integration.combined.All@meta.data$label <- 0
 
 # Replace label with quart_clusters
@@ -66,6 +69,8 @@ integration.combined.All@meta.data[quart_clusters[[15]],]$label <- 15
 integration.combined.All@meta.data[quart_clusters[[16]],]$label <- 16
 
 table(integration.combined.All@meta.data$label)
+# Check to amek sure no 0 left in label here, see note above
+
 saveRDS(integration.combined.All,"SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
 integration.combined.All <- readRDS("SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
 DefaultAssay(integration.combined.All) <- "RNA"
