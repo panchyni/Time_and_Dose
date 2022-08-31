@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -82,8 +82,8 @@ UMAP_values <- readRDS("Integrated_UMAP_values.rds")
 dose_samples <- readRDS("DoseSamples.rds")
 time_samples <- readRDS("TimeSamples.rds")
 
-Integrated_E_mat_nsprcomp <- readRDS("_oldRDS/Integrated_E_mat_nsprcomp.rds")
-Integrated_M_mat_nsprcomp <- readRDS("_oldRDS/Integrated_M_mat_nsprcomp.rds")
+Integrated_E_mat_nsprcomp <- readRDS("Integrated_E_mat_nsprcomp.rds")
+Integrated_M_mat_nsprcomp <- readRDS("Integrated_M_mat_nsprcomp.rds")
 
 ### PC UMAP Plots ###
 
@@ -101,18 +101,18 @@ UMAP_annot$M_PC1 <- Integrated_M_mat_nsprcomp$x[UMAP_samples,1]
 UMAP_annot$M_PC2 <- Integrated_M_mat_nsprcomp$x[UMAP_samples,2]
 
 ### Correlation within dose and time
-cor(UMAP_annot[time_samples,]$Time,UMAP_annot[time_samples,]$M_PC1) # 0.477845
-cor(UMAP_annot[time_samples,]$Time,UMAP_annot[time_samples,]$M_PC2) # 0.1552711
+cor(UMAP_annot[time_samples,]$Time,UMAP_annot[time_samples,]$M_PC1) # 0.477586
+cor(UMAP_annot[time_samples,]$Time,UMAP_annot[time_samples,]$M_PC2) # 0.1553276
 
-cor(UMAP_annot[dose_samples,]$GBC_pM,UMAP_annot[dose_samples,]$M_PC1) # 0.416201
-cor(UMAP_annot[dose_samples,]$GBC_pM,UMAP_annot[dose_samples,]$M_PC2) # 0.0558633
+cor(UMAP_annot[dose_samples,]$GBC_pM,UMAP_annot[dose_samples,]$M_PC1) # 0.4158314
+cor(UMAP_annot[dose_samples,]$GBC_pM,UMAP_annot[dose_samples,]$M_PC2) # 0.05586355
 
 
-cor(UMAP_annot[time_samples,]$E_PC1,UMAP_annot[time_samples,]$M_PC1) # -0.3066327
-cor(UMAP_annot[time_samples,]$E_PC1,UMAP_annot[time_samples,]$M_PC2) # -0.6662105
+cor(UMAP_annot[time_samples,]$E_PC1,UMAP_annot[time_samples,]$M_PC1) # -0.3066519
+cor(UMAP_annot[time_samples,]$E_PC1,UMAP_annot[time_samples,]$M_PC2) # -0.6662232
 
-cor(UMAP_annot[dose_samples,]$E_PC1,UMAP_annot[dose_samples,]$M_PC1) # -0.4948821
-cor(UMAP_annot[dose_samples,]$E_PC1,UMAP_annot[dose_samples,]$M_PC2) # -0.7645159
+cor(UMAP_annot[dose_samples,]$E_PC1,UMAP_annot[dose_samples,]$M_PC1) # -0.4951945
+cor(UMAP_annot[dose_samples,]$E_PC1,UMAP_annot[dose_samples,]$M_PC2) # -0.7646371
 
 ### Basic plots
 

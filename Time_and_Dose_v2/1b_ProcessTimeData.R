@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 # Dependencies
 library(Seurat)
@@ -14,7 +14,7 @@ library(Seurat)
 ### Process Time Data ###
 #########################
 
-time_data.combined <- readRDS("SeuratData/Seurat_integrated_TimeOnly_FullCorr_hg38.rds")
+time_data.combined <- readRDS("SeuratData/Seurat_integrated_TimeOnly_FullCorr_hg38_v2CC.rds")
 
 ### Save Processed Data ###
 

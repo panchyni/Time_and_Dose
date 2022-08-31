@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -48,15 +48,12 @@ correl_TimeE <- readRDS("correl_TimeE.rds")
 correl_TimeM <- readRDS("correl_TimeM.rds")
 #correl_TimeM <- readRDS("correl_TimeM2.rds")
 
-# correl_TimeE <- readRDS("correl_TimeE_wodoublets.rds")
-# correl_TimeM <- readRDS("correl_TimeM_wodoublets.rds")
-
 # Calcualte Correlation with Dose Samples
 correl_ConE <- readRDS("correl_ConE.rds")
 correl_ConM <- readRDS("correl_ConM.rds")
 #correl_ConM <- readRDS("correl_ConM2.rds.rds")
 
-all_genes <- readRDS("AnitCorr_all_genes.rds")
+all_genes <- readRDS("all_genes.rds")
 
 ########################## Figure 3 ########################## 
 
@@ -147,6 +144,16 @@ Con_only_dn # 79
 Time_only_dn <- setdiff(Time_genes_dn,Con_genes_dn)
 Time_only_dn # 0
 
+# Subset genes which only high high correlation with M in Dose/Larger difference between Time/Dose M-corr
+Con_only_up_AllMCorr <- as.data.frame(cbind(correl_ConM[Con_only_up,],correl_TimeM[Con_only_up,],correl_ConM[Con_only_up,]-correl_TimeM[Con_only_up,]))
+# ATP8B2 --- possible colon cancer genes along with VIM (https://www.nature.com/articles/s41598-020-63806-x)
+# FARP1
+# ESM1
+
+# Didn't bother with time genes with 0 and 2 per set
+
+### GO Analysis ###
+
 # BiocManager::install("clusterProfiler")
 # BiocManager::install("GO.db")
 # BiocManager::install("GO.db")
@@ -155,6 +162,48 @@ library(clusterProfiler)
 library(GOSemSim)
 library(GO.db)
 library(org.Hs.eg.db)
+library(HGNChelper)
+
+
+# Downgrade mapping to match org.Hs.eg.db
+
+x <- org.Hs.egSYMBOL
+mapped_genes <- mappedkeys(x)
+xx <- unlist(as.list(x[mapped_genes]))
+
+print(length(intersect(xx,all_genes)))
+print(length(intersect(xx,Con_only_up)))
+print(length(intersect(xx,Con_only_dn)))
+print(length(intersect(xx,Time_only_up)))
+print(length(intersect(xx,Time_only_dn)))
+
+library(HGNChelper)
+current_map <- getCurrentHumanMap()
+xx_check <- checkGeneSymbols(xx,map=current_map,unmapped.as.na=FALSE)
+
+check_back_map <- function(genes,check){
+  for (i in 1:length(genes)){
+    
+    # If there is a single back mapping
+    if (length(check[check$Suggested.Symbol==genes[i],]$x) == 1){
+      #print(check[check$Suggested.Symbol==genes[i],]$x)
+      genes[i] <- check[check$Suggested.Symbol==genes[i],]$x
+    }
+  }
+  return(genes)
+}
+
+all_genes <- check_back_map(all_genes,xx_check)
+Con_only_up <- check_back_map(Con_only_up,xx_check)
+Con_only_dn <- check_back_map(Con_only_dn,xx_check)
+Time_only_up <- check_back_map(Time_only_up,xx_check)
+Time_only_dn <- check_back_map(Time_only_dn,xx_check)
+
+print(length(intersect(xx,all_genes)))
+print(length(intersect(xx,Con_only_up)))
+print(length(intersect(xx,Con_only_dn)))
+print(length(intersect(xx,Time_only_up)))
+print(length(intersect(xx,Time_only_dn)))
 
 #######################
 ### Dose Only Genes ###
@@ -189,12 +238,3 @@ Con_only_dn_GO <- enrichGO(gene = Con_only_dn,
 Con_only_dn_GO
 saveRDS(Con_only_dn_GO,"Con_only_dn_GO.rds")
 write.xlsx(Con_only_dn_GO@result,"Dose_M1_Eprogram_GOTerms.xlsx")
-
-
-# Subset genes which only high high correlation with M in Dose/Larger difference between Time/Dose M-corr
-Con_only_up_AllMCorr <- as.data.frame(cbind(correl_ConM[Con_only_up,],correl_TimeM[Con_only_up,],correl_ConM[Con_only_up,]-correl_TimeM[Con_only_up,]))
-# ATP8B2 --- possible colon cancer genes along with VIM (https://www.nature.com/articles/s41598-020-63806-x)
-# FARP1
-# ESM1
-
-# Didn't bother with time genes with 0 and 2 per set

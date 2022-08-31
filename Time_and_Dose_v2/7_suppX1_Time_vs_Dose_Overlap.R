@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 seuratCon_combo_E_mat_nsprcomp <- readRDS("seuratCon_combo_E_mat_nsprcomp_fullcorr.rds")
 seuratCon_combo_M_mat_nsprcomp <- readRDS("seuratCon_combo_M_mat_nsprcomp_fullcorr.rds")

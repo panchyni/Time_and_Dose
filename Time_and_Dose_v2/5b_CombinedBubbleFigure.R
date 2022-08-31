@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -163,34 +163,97 @@ Quart_by_NN <- table(integated_meta_labeled$label,integated_meta_labeled$seurat_
 Quart_by_NN_Per <- sweep(Quart_by_NN,2,colSums(Quart_by_NN),`/`)
 Quart_by_NN_PerT <- sweep(t(Quart_by_NN),2,colSums(t(Quart_by_NN)),`/`)
 
+QuartDose_by_NN <- table(integated_meta_labeled[dose_samples,]$label,integated_meta_labeled[dose_samples,]$seurat_clusters)
+QuartDose_by_NN_Per <- sweep(QuartDose_by_NN,2,colSums(QuartDose_by_NN),`/`)
+QuartDose_by_NN_PerT <- sweep(t(QuartDose_by_NN),2,colSums(t(QuartDose_by_NN)),`/`)
+
+QuartTime_by_NN <- table(integated_meta_labeled[time_samples,]$label,integated_meta_labeled[time_samples,]$seurat_clusters)
+QuartTime_by_NN_Per <- sweep(QuartTime_by_NN,2,colSums(QuartTime_by_NN),`/`)
+QuartTime_by_NN_PerT <- sweep(t(QuartTime_by_NN),2,colSums(t(QuartTime_by_NN)),`/`)
+
 odd_mat_long$Cluster_1 <- -1
 for(i in 1:16){
   odd_mat_long[i,]$Cluster_1 <- Quart_by_NN_Per[i,2] # Add 1 because starts at cluster 0
 }
 
+odd_mat_long$Cluster_1Dose <- -1
+for(i in 1:16){
+  odd_mat_long[i,]$Cluster_1Dose <- QuartDose_by_NN_Per[i,2] # Add 1 because starts at cluster 0
+}
+
+odd_mat_long$Cluster_1Time <- -1
+for(i in 1:16){
+  odd_mat_long[i,]$Cluster_1Time<- QuartTime_by_NN_Per[i,2] # Add 1 because starts at cluster 0
+}
+
 bubble_Cluster1 <- ggplot(odd_mat_long, aes(x = X, y = Y,size=Count,fill=Cluster_1)) + 
   geom_point(alpha=1.0, shape=21, color="black") +
   scale_size(range = c(5, 15)) +
-  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.5),oob=squish) +
+  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.6),oob=squish) +
   theme_bw() + coord_fixed(ratio = 1) + ylim(c(0.75,4.25)) + xlim(c(0.75,4.25))
 bubble_Cluster1
 
-odd_mat_long$Cluster_8 <- -1
+#bubble_Cluster1Time <- ggplot(odd_mat_long, aes(x = X, y = Y,size=Count,fill=Cluster_1Time)) + 
+#  geom_point(alpha=1.0, shape=21, color="black") +
+#  scale_size(range = c(5, 15)) +
+#  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.6),oob=squish) +
+#  theme_bw() + coord_fixed(ratio = 1) + ylim(c(0.75,4.25)) + xlim(c(0.75,4.25))
+#bubble_Cluster1Time
+
+#bubble_Cluster1Dose <- ggplot(odd_mat_long, aes(x = X, y = Y,size=Count,fill=Cluster_1Dose)) + 
+#  geom_point(alpha=1.0, shape=21, color="black") +
+#  scale_size(range = c(5, 15)) +
+#  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.6),oob=squish) +
+#  theme_bw() + coord_fixed(ratio = 1) + ylim(c(0.75,4.25)) + xlim(c(0.75,4.25))
+#bubble_Cluster1Dose
+
+odd_mat_long$Cluster_10 <- -1
 for(i in 1:16){
-  odd_mat_long[i,]$Cluster_8 <- Quart_by_NN_Per[i,9] # Add 1 because starts at cluster 0
+  odd_mat_long[i,]$Cluster_10 <- Quart_by_NN_Per[i,11] # Add 1 because starts at cluster 0
 }
 
-bubble_Cluster8 <- ggplot(odd_mat_long, aes(x = X, y = Y,size=Count,fill=Cluster_8)) + 
+bubble_Cluster10 <- ggplot(odd_mat_long, aes(x = X, y = Y,size=Count,fill=Cluster_10)) + 
   geom_point(alpha=1.0, shape=21, color="black") +
   scale_size(range = c(5, 15)) +
-  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.5),oob=squish) +
+  scale_fill_gradient2(low='black',high='red',mid='yellow',midpoint=0.1250,limits=c(0.0,0.6),oob=squish) +
   theme_bw() + coord_fixed(ratio = 1) + ylim(c(0.75,4.25)) + xlim(c(0.75,4.25))
-bubble_Cluster8
+bubble_Cluster10
 
-odd_mat_long$Cluster_3 <- -1
-for(i in 1:16){
-  odd_mat_long[i,]$Cluster_3 <- Quart_by_NN_Per[i,4] # Add 1 because starts at cluster 0
+# First test clusters 1 vs 10
+
+for (i in 2:4){
+  C1_cluster <- Quart_by_NN[i,2] # +1 because starts 0
+  C10_cluster <- Quart_by_NN[i,11]
+  C1_all <- sum(Quart_by_NN[,2])
+  C10_all <- sum(Quart_by_NN[,11])
+  C1_vs_C10 <- matrix(c(C1_cluster, C1_all - C1_cluster, C10_cluster, C10_all-C10_cluster), nrow = 2,
+                     dimnames =
+                       list(c("In Cluster", "Out Cluster"),
+                            c("C1 ", "C10")))
+  test <- fisher.test(C1_vs_C10)
+  
+  print(i)
+  print(C1_vs_C10)
+  print(test$p.value)
+  print(test$estimate)
 }
+
+#for (i in 2:4){
+#  C1_cluster <- QuartTime_by_NN[i,2] # +1 because starts 0
+#  C10_cluster <- QuartDose_by_NN[i,11]
+#  C1_all <- sum(QuartTime_by_NN[,2])
+#  C10_all <- sum(QuartDose_by_NN[,11])
+#  C1_vs_C10 <- matrix(c(C1_cluster, C1_all - C1_cluster, C10_cluster, C10_all-C10_cluster), nrow = 2,
+#                      dimnames =
+#                        list(c("In Cluster", "Out Cluster"),
+#                             c("C1 ", "C10")))
+#  test <- fisher.test(C1_vs_C10)
+#  
+#  print(i)
+#  print(C1_vs_C10)
+#  print(test$p.value)
+#  print(test$estimate)
+#}
 
 ### Middle 50% of E and M Scores ###
 

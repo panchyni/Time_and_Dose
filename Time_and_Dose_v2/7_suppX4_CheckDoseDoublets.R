@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 # Dependencies
 library(Seurat)
@@ -11,8 +11,9 @@ library(Seurat)
 library(DoubletFinder)
 library(ggplot2)
 library(scales)
+library(HGNChelper)
 
-dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38.rds")
+dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38_v2CC.rds")
 
 ### Fix annotation ##
 
@@ -64,9 +65,10 @@ kazu_barcodes <- read.table("data_KazuConcentration/barcodes.tsv")
 length(intersect(kazu_barcodes$V1,check_table_0$CBC_alt))
 # All but ten are missing from the filtered barcode set
 # The missing ten are filtered (these are the 10 NA sample post stringent filtering)
-# Go through each dose treatment seperately
 
 
+# Go through each dose treatment seperately, skip unlabeled
+current_map <- getCurrentHumanMap()
 for (i in c(1,2,3,4,8,9,12,13)){
   dose_sample <- row.names(dose_data.combined@meta.data[dose_data.combined@meta.data$GBC_values == i,])
   data.filt <- subset(dose_data.combined,cell=dose_sample)
@@ -74,9 +76,21 @@ for (i in c(1,2,3,4,8,9,12,13)){
   print(dim(data.filt))
   
   # Reprocess Individual Dose for speed
+  g2m.genes <- cc.genes$g2m.genes
+  s.genes <- cc.genes$s.genes
+  
+  g2m.check <- checkGeneSymbols(g2m.genes,map=current_map, unmapped.as.na=FALSE)
+  s.check <- checkGeneSymbols(s.genes,map=current_map, unmapped.as.na=FALSE)
+  
+  g2m.genes <- g2m.check$Suggested.Symbol
+  s.genes <- s.check$Suggested.Symbol
+  
+  print(length(intersect(g2m.genes,row.names(data.filt@assays$RNA@data))))
+  print(length(intersect(s.genes,row.names(data.filt@assays$RNA@data))))
+  
   data.filt = NormalizeData(data.filt)
-  data.filt <- CellCycleScoring(object = data.filt, g2m.features = cc.genes$g2m.genes,
-                                s.features = cc.genes$s.genes)
+  data.filt <- CellCycleScoring(object = data.filt, g2m.features = g2m.genes,
+                                s.features = s.genes)
   
   suppressMessages(require(DoubletFinder))
   
@@ -87,7 +101,7 @@ for (i in c(1,2,3,4,8,9,12,13)){
   data.filt = RunUMAP(data.filt, dims = 1:15, verbose = F)
   
   ## pK Identification (no ground-truth) ---------------------------------------------------------------------------------------
-  sweep.res.list<- paramSweep_v3(data.filt, PCs = 1:10, sct = FALSE)
+  sweep.res.list<- paramSweep_v3(data.filt, PCs = 1:15, sct = FALSE)
   sweep.stats <- summarizeSweep(sweep.res.list, GT = FALSE)
   bcmvn_ <- find.pK(sweep.stats)
   optimal_pk <- as.numeric(as.character(bcmvn_[bcmvn_$BCmetric==max(bcmvn_$BCmetric),]$pK))
@@ -96,7 +110,7 @@ for (i in c(1,2,3,4,8,9,12,13)){
   annot_freq = length(dose_sample)/dim(dose_data.combined@meta.data[dose_data.combined@meta.data$GBC_values > 0,])[1]
   print(annot_freq)
   nExp <- round(ncol(data.filt) * 0.08 * annot_freq)  # expect 8.0% doublets for 10k recovery * annotation freq in total set for homotypic
-  data.filt <- doubletFinder_v3(data.filt, pN = 0.25, pK = optimal_pk, nExp = nExp, PCs = 1:10)
+  data.filt <- doubletFinder_v3(data.filt, pN = 0.25, pK = optimal_pk, nExp = nExp, PCs = 1:15)
   
   # name of the DF prediction can change, so extract the correct column name.
   DF.name = colnames(data.filt@meta.data)[grepl("DF.classification", colnames(data.filt@meta.data))]
@@ -123,14 +137,15 @@ UMAP_values <- readRDS("Dose_UMAP_values.rds")
 
 # Add doublets to met data
 dose_meta$singlet <- "unlabeled"
-dose_meta[row.names(Dose_GBC_1_Doublets),]$singlet <- Dose_GBC_1_Doublets$DF.classifications_0.25_0.06_16
-dose_meta[row.names(Dose_GBC_2_Doublets),]$singlet <- Dose_GBC_2_Doublets$DF.classifications_0.25_0.01_18
+dose_meta[row.names(Dose_GBC_1_Doublets),]$singlet <- Dose_GBC_1_Doublets$DF.classifications_0.25_0.05_16
+dose_meta[row.names(Dose_GBC_2_Doublets),]$singlet <- Dose_GBC_2_Doublets$DF.classifications_0.25_0.19_18
 dose_meta[row.names(Dose_GBC_3_Doublets),]$singlet <- Dose_GBC_3_Doublets$DF.classifications_0.25_0.01_9
-dose_meta[row.names(Dose_GBC_4_Doublets),]$singlet <- Dose_GBC_4_Doublets$DF.classifications_0.25_0.04_9
-dose_meta[row.names(Dose_GBC_8_Doublets),]$singlet <- Dose_GBC_8_Doublets$DF.classifications_0.25_0.03_12
-dose_meta[row.names(Dose_GBC_9_Doublets),]$singlet <- Dose_GBC_9_Doublets$DF.classifications_0.25_0.01_9
-dose_meta[row.names(Dose_GBC_12_Doublets),]$singlet <- Dose_GBC_12_Doublets$DF.classifications_0.25_0.25_7
-dose_meta[row.names(Dose_GBC_13_Doublets),]$singlet <- Dose_GBC_13_Doublets$DF.classifications_0.25_0.03_10
+dose_meta[row.names(Dose_GBC_4_Doublets),]$singlet <- Dose_GBC_4_Doublets$DF.classifications_0.25_0.1_9
+dose_meta[row.names(Dose_GBC_8_Doublets),]$singlet <- Dose_GBC_8_Doublets$DF.classifications_0.25_0.02_12
+dose_meta[row.names(Dose_GBC_9_Doublets),]$singlet <- Dose_GBC_9_Doublets$DF.classifications_0.25_0.13_9
+dose_meta[row.names(Dose_GBC_12_Doublets),]$singlet <- Dose_GBC_12_Doublets$DF.classifications_0.25_0.27_7
+dose_meta[row.names(Dose_GBC_13_Doublets),]$singlet <- Dose_GBC_13_Doublets$DF.classifications_0.25_0.05_10
+table(dose_meta$singlet)
 
 # Plot Doublets on the UMAP
 UMAP_annot <- merge(UMAP_values,dose_meta,by=0)
@@ -145,7 +160,7 @@ UMAP_annot[UMAP_annot$singlet=='Doublet',]$clusters_and_doublets <- "Doublet"
 manual_colors <- hue_pal()(7)
 manual_colors <- c(manual_colors,"#000000")
 ggplot(UMAP_annot, aes(x = UMAP_1, y = UMAP_2, colour=clusters_and_doublets)) + geom_point(size=0.5) +
-  scale_colour_manual(values=manual_colors)
+  scale_colour_manual(values=manual_colors) + theme_bw()
 
 ### Load Integrated Data ###
 
@@ -159,14 +174,14 @@ integated_meta <- integated_meta[dose_samples,]
 
 # Add Doublet data to meta data
 integated_meta$singlet <- "unlabeled"
-integated_meta[row.names(Dose_GBC_1_Doublets),]$singlet <- Dose_GBC_1_Doublets$DF.classifications_0.25_0.06_16
-integated_meta[row.names(Dose_GBC_2_Doublets),]$singlet <- Dose_GBC_2_Doublets$DF.classifications_0.25_0.01_18
+integated_meta[row.names(Dose_GBC_1_Doublets),]$singlet <- Dose_GBC_1_Doublets$DF.classifications_0.25_0.05_16
+integated_meta[row.names(Dose_GBC_2_Doublets),]$singlet <- Dose_GBC_2_Doublets$DF.classifications_0.25_0.19_18
 integated_meta[row.names(Dose_GBC_3_Doublets),]$singlet <- Dose_GBC_3_Doublets$DF.classifications_0.25_0.01_9
-integated_meta[row.names(Dose_GBC_4_Doublets),]$singlet <- Dose_GBC_4_Doublets$DF.classifications_0.25_0.04_9
-integated_meta[row.names(Dose_GBC_8_Doublets),]$singlet <- Dose_GBC_8_Doublets$DF.classifications_0.25_0.03_12
-integated_meta[row.names(Dose_GBC_9_Doublets),]$singlet <- Dose_GBC_9_Doublets$DF.classifications_0.25_0.01_9
-integated_meta[row.names(Dose_GBC_12_Doublets),]$singlet <- Dose_GBC_12_Doublets$DF.classifications_0.25_0.25_7
-integated_meta[row.names(Dose_GBC_13_Doublets),]$singlet <- Dose_GBC_13_Doublets$DF.classifications_0.25_0.03_10
+integated_meta[row.names(Dose_GBC_4_Doublets),]$singlet <- Dose_GBC_4_Doublets$DF.classifications_0.25_0.1_9
+integated_meta[row.names(Dose_GBC_8_Doublets),]$singlet <- Dose_GBC_8_Doublets$DF.classifications_0.25_0.02_12
+integated_meta[row.names(Dose_GBC_9_Doublets),]$singlet <- Dose_GBC_9_Doublets$DF.classifications_0.25_0.13_9
+integated_meta[row.names(Dose_GBC_12_Doublets),]$singlet <- Dose_GBC_12_Doublets$DF.classifications_0.25_0.27_7
+integated_meta[row.names(Dose_GBC_13_Doublets),]$singlet <- Dose_GBC_13_Doublets$DF.classifications_0.25_0.05_10
 
 # Plot Doublets on the UMAP
 UMAP_annot <- merge(UMAP_values,integated_meta,by=0)
@@ -178,7 +193,7 @@ ggplot(UMAP_annot, aes(x = UMAP_1, y = UMAP_2, colour=singlet)) + geom_point(siz
 UMAP_annot$clusters_and_doublets <- as.character(UMAP_annot$seurat_clusters)
 UMAP_annot[UMAP_annot$singlet=='Doublet',]$clusters_and_doublets <- "Doublet"
 
-manual_colors <- hue_pal()(13)
+manual_colors <- hue_pal()(15)
 manual_colors <- c(manual_colors,"#000000")
 ggplot(UMAP_annot, aes(x = UMAP_1, y = UMAP_2, colour=clusters_and_doublets)) + geom_point(size=0.5) +
   scale_colour_manual(values=manual_colors) + geom_point(size=0.25) +

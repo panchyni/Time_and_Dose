@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -48,15 +48,12 @@ correl_TimeE <- readRDS("correl_TimeE.rds")
 #correl_TimeM <- readRDS("correl_TimeM.rds")
 correl_TimeM <- readRDS("correl_TimeM2.rds")
 
-# correl_TimeE <- readRDS("correl_TimeE_wodoublets.rds")
-# correl_TimeM <- readRDS("correl_TimeM2_wodoublts.rds")
-
 # Calcualte Correlation with Dose Samples
 correl_ConE <- readRDS("correl_ConE.rds")
 #correl_ConM <- readRDS("correl_ConM.rds")
 correl_ConM <- readRDS("correl_ConM2.rds")
 
-all_genes <- readRDS("AnitCorr_all_genes.rds")
+all_genes <- readRDS("all_genes.rds")
 
 ########################## Figure 3 ########################## 
 
@@ -121,8 +118,8 @@ Con_genes_up <- intersect(names(correl_ConE_Bot25),names(correl_ConM_Top25))
 
 # Overlapping Genes
 length(Time_genes_up) # 57
-length(Con_genes_up) # 114
-length(intersect(Time_genes_up,Con_genes_up)) # 39
+length(Con_genes_up) # 115
+length(intersect(Time_genes_up,Con_genes_up)) # 40
 
 # Unique Genes
 Con_only_up <- setdiff(Con_genes_up,Time_genes_up)
@@ -147,6 +144,17 @@ Con_only_dn # 59
 Time_only_dn <- setdiff(Time_genes_dn,Con_genes_dn)
 Time_only_dn # 7
 
+### Look at Genes with large difference in Mcorr between Data sets ###
+
+Time_AllMCorr <- as.data.frame(cbind(correl_ConM[Time_only_up,],correl_TimeM[Time_only_up,],correl_TimeM[Time_only_up,]-correl_ConM[Time_only_up,]))
+## Time
+#SLC20A1 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6755178/ (Down Regulation?)
+#AKR1C1 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5048132/
+#HPCAL1 -- Wnt signaling (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6484330/), but also downregulated in EMT in KK47 cancer cells (https://www.mdpi.com/1420-3049/21/1/84/htm)
+
+
+### GO Analysis ###
+
 # BiocManager::install("clusterProfiler")
 # BiocManager::install("GO.db")
 # BiocManager::install("GO.db")
@@ -156,6 +164,46 @@ library(GOSemSim)
 library(GO.db)
 library(org.Hs.eg.db)
 library(HGNChelper)
+
+# Downgrade mapping to match org.Hs.eg.db
+
+x <- org.Hs.egSYMBOL
+mapped_genes <- mappedkeys(x)
+xx <- unlist(as.list(x[mapped_genes]))
+
+print(length(intersect(xx,all_genes)))
+print(length(intersect(xx,Con_only_up)))
+print(length(intersect(xx,Con_only_dn)))
+print(length(intersect(xx,Time_only_up)))
+print(length(intersect(xx,Time_only_dn)))
+
+library(HGNChelper)
+current_map <- getCurrentHumanMap()
+xx_check <- checkGeneSymbols(xx,map=current_map,unmapped.as.na=FALSE)
+
+check_back_map <- function(genes,check){
+  for (i in 1:length(genes)){
+    
+    # If there is a single back mapping
+    if (length(check[check$Suggested.Symbol==genes[i],]$x) == 1){
+      #print(check[check$Suggested.Symbol==genes[i],]$x)
+      genes[i] <- check[check$Suggested.Symbol==genes[i],]$x
+    }
+  }
+  return(genes)
+}
+
+all_genes <- check_back_map(all_genes,xx_check)
+Con_only_up <- check_back_map(Con_only_up,xx_check)
+Con_only_dn <- check_back_map(Con_only_dn,xx_check)
+Time_only_up <- check_back_map(Time_only_up,xx_check)
+Time_only_dn <- check_back_map(Time_only_dn,xx_check)
+
+print(length(intersect(xx,all_genes)))
+print(length(intersect(xx,Con_only_up)))
+print(length(intersect(xx,Con_only_dn)))
+print(length(intersect(xx,Time_only_up)))
+print(length(intersect(xx,Time_only_dn)))
 
 #######################
 ### Dose Only Genes ###
@@ -221,17 +269,3 @@ Time_only_dn_GO <- enrichGO(gene = Time_only_dn,
                            readable      = FALSE)
 saveRDS(Time_only_dn_GO,"Time_only_dn_GO_M2.rds")
 write.xlsx(Time_only_dn_GO@result,"Time_M2_Eprogram_GOTerms.xlsx")
-
-### Look at Genes with large difference in Mcorr between Data sets ###
-
-Dose_AllMCorr <- as.data.frame(cbind(correl_ConM[Con_only_up,],correl_TimeM[Con_only_up,],correl_ConM[Con_only_up,]-correl_TimeM[Con_only_up,]))
-## Dose
-# CADM3 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3622948/, correlated change with VIM and FN1, but weird paper, not sure which line is supposed to be M
-# SYN1 --- obliqued reference to EMT https://www.assaygenie.com/content/Antibody%20Genie/PACO/PACO19833.pdf
-# NKAIN1 --- cancer marker gene (https://academic.oup.com/noa/article/3/1/vdab144/6386379,https://academic.oup.com/noa/article/3/1/vdab144/6386379)
-#        --- but part of a gene set anti-correlated with MEK activated EMT (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8131078/)
-Time_AllMCorr <- as.data.frame(cbind(correl_ConM[Time_only_up,],correl_TimeM[Time_only_up,],correl_TimeM[Time_only_up,]-correl_ConM[Time_only_up,]))
-## Time
-#SLC20A1 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6755178/ (Down Regulation?)
-#AKR1C1 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5048132/
-#HPCAL1 -- Wnt signaling (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6484330/), but also downregulated in EMT in KK47 cancer cells (https://www.mdpi.com/1420-3049/21/1/84/htm)

@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -89,7 +89,7 @@ dim(Scaled_Integrated_data_PD1up)
 library(nsprcomp)
 set.seed(5) # Controls randomness for nnPC, minor variations, mainly to keep enriched gene lists consistent (+/-1 genes)
 
-Integrated_PD1up_mat_nsprcomp <- nsprcomp(t(Scaled_Integrated_data_PD1up),nneg=TRUE,ncomp=5,em_maxiter = 100,em_tol = 0.0001)
+Integrated_PD1up_mat_nsprcomp <- nsprcomp(t(Scaled_Integrated_data_PD1up),nneg=TRUE,ncomp=25,em_maxiter = 10000,em_tol = 0.00001)
 
 saveRDS(Integrated_PD1up_mat_nsprcomp,"Integrated_PD1up_mat_nsprcomp.rds")
 Integrated_PD1up_mat_nsprcomp <- readRDS("Integrated_PD1up_mat_nsprcomp.rds")

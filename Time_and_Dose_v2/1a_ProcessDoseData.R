@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 # Dependencies
 library(Seurat)
@@ -14,7 +14,7 @@ library(Seurat)
 ### Process Dose Data ###
 #########################
 
-dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38.rds")
+dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38_v2CC.rds")
 
 ### Fix annotation ##
 
@@ -115,6 +115,7 @@ dose_samples <- row.names(dose_meta[dose_meta$GBC_values > 0,])
 Scaled_data_Labeled_E <- Scaled_data[row.names(Scaled_data) %in% E_genes$Gene,dose_samples]
 Scaled_data_Labeled_M <- Scaled_data[row.names(Scaled_data) %in% M_genes$Gene,dose_samples]
 
+set.seed(5) # Controls randomness for nnPC, minor variations , mainly to keep enriched gene lists consistent (+/-1 genes)
 seuratCon_combo_E_mat_Labeled_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_E),nneg=TRUE,ncomp=25,em_maxiter = 10000,em_tol = 0.00001)
 seuratCon_combo_M_mat_Labeled_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_M),nneg=TRUE,ncomp=25,em_maxiter = 10000,em_tol = 0.00001)
 

@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 #setwd("/home/panchy/DoseTIme/_fromscratch_server")
 
 ### IMPORTANT NOTE ###
@@ -66,8 +66,8 @@ integration.combined.All@meta.data[quart_clusters[[15]],]$label <- 15
 integration.combined.All@meta.data[quart_clusters[[16]],]$label <- 16
 
 table(integration.combined.All@meta.data$label)
-#saveRDS(integration.combined.All,"SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
-#integration.combined.All <- readRDS("SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
+saveRDS(integration.combined.All,"SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
+integration.combined.All <- readRDS("SeuratData/Seurat_integrated_TimeAndCon_FullCorrection_hg38_ProcessedforMarkers.rds")
 DefaultAssay(integration.combined.All) <- "RNA"
 
 # Check Assignments
@@ -140,7 +140,7 @@ dim(AllMarkers_Norm_adpv05_filter)
 dim(AllMarkers_Time_adpv05_filter)
 dim(AllMarkers_Dose_adpv05_filter)
 
-drop_files_all <- "DropOutGeneSets/DropFileAll.txt"
+drop_files_all <- "DropOutGeneSets/DropFilesAll.txt"
 drop_files_time <- "DropOutGeneSets/DropFilesTime.txt"
 drop_files_dose <- "DropOutGeneSets/DropFilesDose.txt"
 
@@ -187,20 +187,20 @@ CorrectEMTMarkers <- function(marker_df,drop_files,number_of_genes,logFC=FALSE){
 }
 
 AllMarkers_Norm_adpv05_filter_DropCorrection <- CorrectEMTMarkers(AllMarkers_Norm_adpv05_filter,drop_files_all,20085)
-# [1] "Total EMT Markers: 712"
+# [1] "Total EMT Markers: 709"
 # [1] "Droped EMT Markers: 12"
-# [1] "Remaiing EMT Markers: 700"
-# [1] "Percent Remaining: 0.98314606741573"
+# [1] "Remaiing EMT Markers: 697"
+# [1] "Percent Remaining: 0.983074753173484"
 AllMarkers_Time_adpv05_filter_DropCorrection <- CorrectEMTMarkers(AllMarkers_Time_adpv05_filter,drop_files_time,18570)
-# [1] "Total EMT Markers: 755"
-# [1] "Droped EMT Markers: 17"
-# [1] "Remaiing EMT Markers: 738"
-# [1] "Percent Remaining: 0.977483443708609"
+# [1] "Total EMT Markers: 757"
+# [1] "Droped EMT Markers: 14"
+# [1] "Remaiing EMT Markers: 743"
+# [1] "Percent Remaining: 0.981505944517834"
 AllMarkers_Dose_adpv05_filter_DropCorrection <- CorrectEMTMarkers(AllMarkers_Dose_adpv05_filter,drop_files_dose,19186)
-# [1] "Total EMT Markers: 497"
-# [1] "Droped EMT Markers: 36"
-# [1] "Remaiing EMT Markers: 461"
-# [1] "Percent Remaining: 0.927565392354125"
+# [1] "Total EMT Markers: 496"
+# [1] "Droped EMT Markers: 33"
+# [1] "Remaiing EMT Markers: 463"
+# [1] "Percent Remaining: 0.933467741935484"
 
 # Check 
 MergeDropGenes <- function(drop_files){

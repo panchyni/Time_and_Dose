@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch//")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2///")
 
 ### IMPORTANT NOTE ###
 # Some wonkiness is expected with UMAP across systems, even with set seed
@@ -232,8 +232,8 @@ grid.arrange(UMAP_Dose_by_DoseClusters,UMAP_Int_by_IntClusters,
              UMAP_Dose_by_IntClusters,UMAP_Int_by_DoseClusters, nrow=2)
 
 # Overlap in Clusters 
-int_clusterA <- UMAP_integrated_annot[UMAP_integrated_annot$seurat_clusters %in% c(0,4),]
-int_clusterB <- UMAP_integrated_annot[UMAP_integrated_annot$seurat_clusters %in% c(1,8),]
+int_clusterA <- UMAP_integrated_annot[UMAP_integrated_annot$seurat_clusters %in% c(0,3),]
+int_clusterB <- UMAP_integrated_annot[UMAP_integrated_annot$seurat_clusters %in% c(1,10),]
 
 dose_cluster0 <- UMAP_integrated_annot[UMAP_integrated_annot$dose_clusters == 0,]
 dose_cluster2 <- UMAP_integrated_annot[UMAP_integrated_annot$dose_clusters == 2,]
@@ -263,3 +263,17 @@ JTest_B <- jaccard.test(int_cluster_B_binary,dose_cluster_2_binary,method='exact
 
 JTest_Aboot <- jaccard.test(int_cluster_A_binary,dose_cluster_0_binary,method='bootstrap',B=100000)
 JTest_Bboot <- jaccard.test(int_cluster_B_binary,dose_cluster_2_binary,method='bootstrap',B=100000)
+
+### Integrated Data: Time Clusters ###
+
+# Add annotation data to UMAP valuse
+UMAP_integrated_annot <- merge(UMAP_integated_values,integated_meta,by=0)
+row.names(UMAP_integrated_annot) <- UMAP_integrated_annot$Row.names
+UMAP_integrated_annot$GBC_pM_factor <- factor(UMAP_integrated_annot$GBC_pM)
+UMAP_integrated_annot <- UMAP_integrated_annot[time_samples,]
+
+UMAP_Int_by_IntClusters <- ggplot(UMAP_integrated_annot, aes(x = UMAP_1, y = UMAP_2, colour=seurat_clusters)) +
+  geom_point(size=0.5) + theme_bw() + labs(color="clusters") + xlab("UMAP 1") + ylab("UMAP 2") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text = element_text(size = 10),axis.title=element_text(size=11),aspect.ratio=1,legend.position = "bottom") +
+  guides(color = guide_legend(override.aes = list(size = 3)))
+UMAP_Int_by_IntClusters

@@ -3,7 +3,7 @@
 ########################
 
 ### Folder
-setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FullCorr_FromScratch/")
+setwd("/Users/nicholaspanchy/Documents/Work_UTK/DoseTime_FromScratch2/")
 
 # Dependencies
 library(Seurat)
@@ -14,7 +14,7 @@ library(Seurat)
 ### Process Dose Data ###
 #########################
 
-dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38.rds")
+dose_data.combined <- readRDS("SeuratData/Seurat_concentration_DoseOnly_FullCorr_hg38_v2CC.rds")
 DimPlot(dose_data.combined, reduction = "umap",group.by = "Phase")
 
 
@@ -29,7 +29,7 @@ dose_data.combined <- FindClusters(dose_data.combined, resolution = 0.5)
 
 DimPlot(dose_data.combined, reduction = "umap",group.by = "Phase")
 
-combined_nointegration.combined <- readRDS("SeuratData/Seurat_NoIntegration_Combined_FullCorreciton_hg38.rds")
+combined_nointegration.combined <- readRDS("SeuratData/Seurat_NoIntegration_Combined_FullCorreciton_hg38_v2CC.rds")
 DimPlot(combined_nointegration.combined, reduction = "umap",group.by = "Batch")
 
 #######################
