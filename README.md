@@ -18,3 +18,5 @@ No raw sequencing data is included because of file size limitations
   - Intermediate files are also excluded because most are larger than the 25Mb limit but can be generated from the raw data
 
 Time_and_Dose.zip contains the first version of the code which has fewer corrections for confunding variables
+
+Values noted in comments SHOULD reflect the last run, but some may be from older versions of the code/versiosn of R.
