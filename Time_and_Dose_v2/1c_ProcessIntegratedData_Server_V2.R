@@ -179,7 +179,7 @@ cor(Integrated_E_mat_Labeled_nsprcomp$x[labeled_sampels,1],Integrated_E_mat_nspr
 cor(Integrated_M_mat_Labeled_nsprcomp$x[labeled_sampels,1],Integrated_M_mat_nsprcomp$x[labeled_sampels,1])
 
 ### Check unlabeled data + dose samples
-# Uncomment and run after running 7d
+# Uncomment and run after running 7_X4
 
 #integated_meta <- readRDS("Integrated_MetaData.rds")
 #dose_samples <- readRDS("DoseSamples.rds")
