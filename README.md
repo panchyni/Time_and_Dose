@@ -8,8 +8,7 @@ Instruction
   - After running script 6, move the results to CoxModels_Updated and run the scripts there
     1. The get_dataset scripts will pull data from TCGA
     2. The RunCoxModel scripts will generate the cox models
-  - Note: Putative doublet checks may fail if run before the doublet check scripts, but this is supplemental and can be ignored
-
+    
 Notes:
 
 No raw sequencing data is included because of file size limitations
