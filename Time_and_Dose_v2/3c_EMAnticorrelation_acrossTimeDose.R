@@ -132,26 +132,27 @@ ggplot(dose_heat_data_long, aes(X, Y, fill= value)) + geom_tile() +
 #############################
 ### Without Doublets Time ###
 #############################
+# Unomment and run after 7X4
 
-time_doublets <- readRDS("time_doublets.rds")
-time_wo_doublets <- setdiff(time_samples,time_doublets)
+#time_doublets <- readRDS("time_doublets.rds")
+#time_wo_doublets <- setdiff(time_samples,time_doublets)
 
-integated_meta_drop_doublet <- integated_meta[time_wo_doublets,]
+#integated_meta_drop_doublet <- integated_meta[time_wo_doublets,]
 
 ### Time Samples ###
-time_E1_vs_M1_drop <- matrix(,nrow=6,ncol=1)
-time_E1_vs_M2_drop <- matrix(,nrow=6,ncol=1)
-index = 1
-for (i in c(0,1,2,3,4,8)){
+#time_E1_vs_M1_drop <- matrix(,nrow=6,ncol=1)
+#time_E1_vs_M2_drop <- matrix(,nrow=6,ncol=1)
+#index = 1
+#for (i in c(0,1,2,3,4,8)){
   # Get time samples
-  time_subset <- row.names(integated_meta_drop_doublet[integated_meta_drop_doublet$Time==i,])
+#  time_subset <- row.names(integated_meta_drop_doublet[integated_meta_drop_doublet$Time==i,])
   
   # E1 vs M1 and M2 correlation
-  e1m1 <- cor(Integrated_E_mat_nsprcomp$x[time_subset,1],Integrated_M_mat_nsprcomp$x[time_subset,1])
-  e1m2 <- cor(Integrated_E_mat_nsprcomp$x[time_subset,1],Integrated_M_mat_nsprcomp$x[time_subset,2])
-  time_E1_vs_M1_drop[index,1] <- e1m1
-  time_E1_vs_M2_drop[index,1] <- e1m2
-  index = index + 1
-}
-cor(time_E1_vs_M1_drop,time_E1_vs_M1)
-cor(time_E1_vs_M2_drop,time_E1_vs_M2)
+#  e1m1 <- cor(Integrated_E_mat_nsprcomp$x[time_subset,1],Integrated_M_mat_nsprcomp$x[time_subset,1])
+#  e1m2 <- cor(Integrated_E_mat_nsprcomp$x[time_subset,1],Integrated_M_mat_nsprcomp$x[time_subset,2])
+#  time_E1_vs_M1_drop[index,1] <- e1m1
+#  time_E1_vs_M2_drop[index,1] <- e1m2
+#  index = index + 1
+#}
+#cor(time_E1_vs_M1_drop,time_E1_vs_M1)
+#cor(time_E1_vs_M2_drop,time_E1_vs_M2)
