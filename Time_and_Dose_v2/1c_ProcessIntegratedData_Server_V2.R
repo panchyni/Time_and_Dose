@@ -179,34 +179,36 @@ cor(Integrated_E_mat_Labeled_nsprcomp$x[labeled_sampels,1],Integrated_E_mat_nspr
 cor(Integrated_M_mat_Labeled_nsprcomp$x[labeled_sampels,1],Integrated_M_mat_nsprcomp$x[labeled_sampels,1])
 
 ### Check unlabeled data + dose samples
-integated_meta <- readRDS("Integrated_MetaData.rds")
-dose_samples <- readRDS("DoseSamples.rds")
-time_samples <- readRDS("TimeSamples.rds")
+# Uncomment and run after running 7d
 
-time_doublets <- readRDS("time_doublets.rds")
-time_wo_doublets <- setdiff(time_samples,time_doublets)
-time_samples <- time_wo_doublets
+#integated_meta <- readRDS("Integrated_MetaData.rds")
+#dose_samples <- readRDS("DoseSamples.rds")
+#time_samples <- readRDS("TimeSamples.rds")
 
-Scaled_data_Labeled_E <- readRDS("Scaled_Integrated_data_E.rds")
-Scaled_data_Labeled_M <- readRDS("Scaled_Integrated_data_M.rds")
+#time_doublets <- readRDS("time_doublets.rds")
+#time_wo_doublets <- setdiff(time_samples,time_doublets)
+#time_samples <- time_wo_doublets
 
-Scaled_data_Labeled_E_fliter <- Scaled_data_Labeled_E[,union(dose_samples,time_samples)]
-Scaled_data_Labeled_M_filter <- Scaled_data_Labeled_M[,union(dose_samples,time_samples)]
+#Scaled_data_Labeled_E <- readRDS("Scaled_Integrated_data_E.rds")
+#Scaled_data_Labeled_M <- readRDS("Scaled_Integrated_data_M.rds")
 
-dim(Scaled_data_Labeled_E_fliter)
-dim(Scaled_data_Labeled_M_filter)
+#Scaled_data_Labeled_E_fliter <- Scaled_data_Labeled_E[,union(dose_samples,time_samples)]
+#Scaled_data_Labeled_M_filter <- Scaled_data_Labeled_M[,union(dose_samples,time_samples)]
+
+#dim(Scaled_data_Labeled_E_fliter)
+#dim(Scaled_data_Labeled_M_filter)
 
 # Quick Check so use fewer npcs
-library(nsprcomp)
-set.seed(5) # Controls randomness for nnPC, minor variations , mainly to keep enriched gene lists consistent (+/-1 genes)
+#library(nsprcomp)
+#set.seed(5) # Controls randomness for nnPC, minor variations , mainly to keep enriched gene lists consistent (+/-1 genes)
 
-Integrated_E_mat_LabeledFilter_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_E_fliter),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
-Integrated_M_mat_LabeledFilter_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_M_filter),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
+#Integrated_E_mat_LabeledFilter_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_E_fliter),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
+#Integrated_M_mat_LabeledFilter_nsprcomp <- nsprcomp(t(Scaled_data_Labeled_M_filter),nneg=TRUE,ncomp=5,em_maxiter = 10000,em_tol = 0.00001)
 
-saveRDS(Integrated_E_mat_LabeledFilter_nsprcomp,"Integrated_E_mat_LabeledFilter_nsprcomp.rds")
-saveRDS(Integrated_M_mat_LabeledFilter_nsprcomp,"Integrated_M_mat_LabeledFilter_nsprcomp.rds")
+#saveRDS(Integrated_E_mat_LabeledFilter_nsprcomp,"Integrated_E_mat_LabeledFilter_nsprcomp.rds")
+#saveRDS(Integrated_M_mat_LabeledFilter_nsprcomp,"Integrated_M_mat_LabeledFilter_nsprcomp.rds")
 
 # Check against scores without unlabeld (little diff cor > 0.9999)
-labeledfiltered_samples <- union(dose_samples,time_samples)
-cor(Integrated_E_mat_LabeledFilter_nsprcomp$x[labeledfiltered_samples,1],Integrated_E_mat_nsprcomp$x[labeledfiltered_samples,1])
-cor(Integrated_M_mat_LabeledFilter_nsprcomp$x[labeledfiltered_samples,1],Integrated_M_mat_nsprcomp$x[labeledfiltered_samples,1])
+#labeledfiltered_samples <- union(dose_samples,time_samples)
+#cor(Integrated_E_mat_LabeledFilter_nsprcomp$x[labeledfiltered_samples,1],Integrated_E_mat_nsprcomp$x[labeledfiltered_samples,1])
+#cor(Integrated_M_mat_LabeledFilter_nsprcomp$x[labeledfiltered_samples,1],Integrated_M_mat_nsprcomp$x[labeledfiltered_samples,1])
